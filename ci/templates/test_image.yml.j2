@@ -1,3 +1,4 @@
+{% if arch != "cuda-x86_64" %}
 ##### libtree
 
 build_job_test_image_libtree-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]}}:
@@ -95,3 +96,4 @@ test_job_test_image_mpi_simple-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]
   variables:
     SLURM_JOB_NUM_NODES: 2
     SLURM_NTASKS: 2
+{% endif %}

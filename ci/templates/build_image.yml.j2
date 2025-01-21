@@ -19,6 +19,7 @@ create_job_build_image_multiarch-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arc
     PERSIST_IMAGE_NAME: "{{registry_build_image_name_tag}}"
 {% endif %}
 
+{% if arch != "cuda-x86_64" %}
 test_job_build_image-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]}}:
   stage: test_base_image
   extends:
@@ -35,6 +36,7 @@ test_job_build_image-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]}}:
     {% if arch == "rocm" -%}
     - 'apt-cache show rocm-core | grep "Version: {{rocmver}}."'
     {%- endif %}
+{% endif %}
 
 {% if arch != "cuda-x86_64" %}
 # We have multiarch image only for CUDA

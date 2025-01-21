@@ -1,4 +1,6 @@
 ARG BUILDIMG
+ARG RUNTIMEIMG
+
 FROM $BUILDIMG as builder
 
 RUN apt-get update \
@@ -20,7 +22,6 @@ RUN spack-install-helper \
 
 
 # copy only relevant parts to the final container
-ARG RUNTIMEIMG
 FROM $RUNTIMEIMG
 
 # it is important to keep the paths, otherwise your installation is broken

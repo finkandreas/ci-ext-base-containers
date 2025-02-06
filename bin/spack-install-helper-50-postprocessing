@@ -30,4 +30,7 @@ if [ -n "$ROCM_ARCH" ]; then
     echo "export HIPCC_COMPILE_FLAGS_APPEND=${HIPCC_COMPILE_FLAGS_APPEND}" >> /etc/profile.d/z10_spack_environment.sh
 fi
 
-echo 'export LD_LIBRARY_PATH=/lib64:/usr/lib64:$LD_LIBRARY_PATH' >> /etc/profile.d/z11_libfabric_ldpaths.sh
+# add the LD_LIBRARY_PATH also to `z10_spack_environment.sh`.
+# It is technically something unrelated, but the docs only mention to copy the file `z10_spack_environment.sh`,
+# which I do not want to break, by adding a second file
+echo 'export LD_LIBRARY_PATH=/lib64:/usr/lib64:$LD_LIBRARY_PATH' >> /etc/profile.d/z10_spack_environment.sh

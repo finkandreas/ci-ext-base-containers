@@ -34,6 +34,13 @@ test_job_test_image_gromacs-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]}}:
   extends:
     - {{container_runner[arch]}}
   image: "{{registry_path}}/test-gromacs:spack{{spackver}}-{{os}}{{osver}}-{{archstr[arch]}}"
+  {% if arch.startswith("cuda") -%}
+  variables:
+    SLURM_MPI_TYPE: cray_shasta
+    CSCS_ADDITIONAL_MOUNTS: '["/opt/cray/pe/mpich/8.1.28/ofi/gnu/12.3/lib/libmpi.so:/opt/view/lib/libmpi.so.12","/opt/cray/pe/lib64/libpmi.so.0:/usr/lib64/libpmi.so.0","/opt/cray/pe/lib64/libpmi2.so.0:/usr/lib64/libpmi2.so.0","/opt/cray/pals/1.4/lib/libpals.so.0:/usr/lib64/libpals.so.0","/usr/lib64/libgfortran.so.5:/usr/lib64/libgfortran.so.5","/opt/cray/pe/mpich/8.1.28/gtl/lib/libmpi_gtl_cuda.so:/usr/lib64/libmpi_gtl_cuda.so"]'
+    MPICH_GPU_SUPPORT_ENABLED: '1'
+    LD_PRELOAD: '/usr/lib64/libmpi_gtl_cuda.so'
+  {%- endif %}
   script:
     - which gmx_mpi
     - gmx_mpi -version
@@ -64,7 +71,11 @@ test_job_test_image_mpi-osu_bw-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]
     - {{container_runner[arch]}}
   image: "{{registry_path}}/test-mpi-osu_bw:spack{{spackver}}-{{os}}{{osver}}-{{archstr[arch]}}"
   script:
+    {% if arch.startswith("cuda") -%}
+    - osu_bw D D | tee osu_bw-out.txt
+    {% else -%}
     - osu_bw | tee osu_bw-out.txt
+    {%- endif %}
     - SIZE=4194304
     - BW_THRESHOLD=20000
     - BW=$(awk "/^$SIZE/ {print \$2}" osu_bw-out.txt)
@@ -73,6 +84,12 @@ test_job_test_image_mpi-osu_bw-{{os}}{{osver}}-spack{{spackver}}-{{archstr[arch]
   variables:
     SLURM_JOB_NUM_NODES: 2
     SLURM_NTASKS: 2
+    {% if arch.startswith("cuda") -%}
+    SLURM_MPI_TYPE: cray_shasta
+    CSCS_ADDITIONAL_MOUNTS: '["/opt/cray/pe/mpich/8.1.28/ofi/gnu/12.3/lib/libmpi.so:/opt/view/lib/libmpi.so.12","/opt/cray/pe/lib64/libpmi.so.0:/usr/lib64/libpmi.so.0","/opt/cray/pe/lib64/libpmi2.so.0:/usr/lib64/libpmi2.so.0","/opt/cray/pals/1.4/lib/libpals.so.0:/usr/lib64/libpals.so.0","/usr/lib64/libgfortran.so.5:/usr/lib64/libgfortran.so.5","/opt/cray/pe/mpich/8.1.28/gtl/lib/libmpi_gtl_cuda.so:/usr/lib64/libmpi_gtl_cuda.so"]'
+    MPICH_GPU_SUPPORT_ENABLED: '1'
+    LD_PRELOAD: '/usr/lib64/libmpi_gtl_cuda.so'
+    {%- endif %}
 
 ##### mpi_simple
 

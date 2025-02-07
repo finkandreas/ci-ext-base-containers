@@ -2,9 +2,9 @@
 
 set -ex
 
-# rebuild ld database
-ldconfig -v
-
 # correctly link /opt/view
 ln -s /opt/._view/* /opt/view
+
+# rebuild ld database
+ldconfig -v
 
